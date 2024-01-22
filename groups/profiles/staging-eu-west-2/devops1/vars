@@ -1,0 +1,2 @@
+aws_account = "staging"
+environment = "staging"
