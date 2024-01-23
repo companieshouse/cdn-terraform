@@ -33,6 +33,12 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     compress               = true
   }
 
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+
   viewer_certificate {
     cloudfront_default_certificate = true
   }
@@ -42,18 +48,18 @@ resource "aws_cloudfront_origin_access_identity" "oai" {
   comment = "Allow Cloudfront to access the S3 bucket"
 }
 
-resource "aws_s3_bucket" "example" {
-  bucket = "${var.service}.${var.environment}.${var.aws_account}.ch.gov.uk"
-  acl    = "private" 
-}
-
 resource "aws_cloudfront_cache_policy" "example" {
   name = "example-cache-policy"
+  min_ttl                        = var.min_ttl
+  default_ttl                    = var.default_ttl
+  max_ttl                        = var.max_ttl
 
   parameters_in_cache_key_and_forwarded_to_origin {
     headers_config {
       header_behavior = "whitelist"
-      headers         = ["Origin", "Access-Control-Allow-Origin"]
+      headers {
+        items = ["Origin", "Access-Control-Allow-Origin"]
+      }        
     }
 
     cookies_config {
@@ -66,24 +72,21 @@ resource "aws_cloudfront_cache_policy" "example" {
 
     enable_accept_encoding_gzip    = true
     enable_accept_encoding_brotli  = true
-    min_ttl                        = var.min_ttl
-    default_ttl                    = var.default_ttl
-    max_ttl                        = var.max_ttl
   }
 }
 
 resource "aws_cloudfront_origin_request_policy" "example" {
   name = "example-request-policy"
 
-  header_behavior {
+  headers_config {
     header_behavior = "none"
   }
 
-  query_string_behavior {
-    query_string_behavior = "none"
+  cookies_config {
+    cookie_behavior = "none"
   }
 
-  cookie_behavior {
-    cookie_behavior = "none"
+  query_strings_config {
+    query_string_behavior = "none"
   }
 }
