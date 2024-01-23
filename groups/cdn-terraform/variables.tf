@@ -1,19 +1,22 @@
 variable "default_ttl" {
   description = "The default TTL (Time to Live) value"
   default     = 300
+  type        = number
 }
 
 variable "min_ttl" {
   description = "The minimum TTL value"
   default     = 300
+  type        = number
 }
 
 variable "max_ttl" {
   description = "The maximum TTL value"
   default     = 300
+  type        = number
 }
 
-variable "region" {
+variable "aws_region" {
   type        = string
   description = "The AWS region in which resources will be created"
 }
@@ -26,7 +29,7 @@ variable "environment" {
 variable "service" {
   type        = string
   description = "The service name to be used when creating AWS resources"
-  default     = "physical-media-backup"
+  default     = "cdn-terraform"
 }
 
 variable "aws_account" {

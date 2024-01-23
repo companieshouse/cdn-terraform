@@ -22,7 +22,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
       query_string = false
       headers      = ["Origin", "Access-Control-Allow-Origin"]
       cookies {
-        forward = "none"
+        forward    = "none"
       }
     }
 
@@ -49,7 +49,7 @@ resource "aws_cloudfront_origin_access_identity" "oai" {
 }
 
 resource "aws_cloudfront_cache_policy" "example" {
-  name = "example-cache-policy"
+  name                           = "${var.service}-${var.environment}"
   min_ttl                        = var.min_ttl
   default_ttl                    = var.default_ttl
   max_ttl                        = var.max_ttl
@@ -76,7 +76,7 @@ resource "aws_cloudfront_cache_policy" "example" {
 }
 
 resource "aws_cloudfront_origin_request_policy" "example" {
-  name = "example-request-policy"
+  name = "${var.service}-${var.environment}"
 
   headers_config {
     header_behavior = "none"
