@@ -5,7 +5,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   default_root_object = "index.html"
 
   origin {
-    domain_name = aws_s3_bucket.example.bucket_regional_domain_name
+    domain_name = aws_s3_bucket.s3_bucket.bucket_regional_domain_name
     origin_id   = "S3-Origin"
 
     s3_origin_config {
@@ -48,7 +48,7 @@ resource "aws_cloudfront_origin_access_identity" "oai" {
   comment = "Allow Cloudfront to access the S3 bucket"
 }
 
-resource "aws_cloudfront_cache_policy" "example" {
+resource "aws_cloudfront_cache_policy" "cache_policy"{
   name                           = "${var.service}-${var.environment}"
   min_ttl                        = var.min_ttl
   default_ttl                    = var.default_ttl
@@ -75,7 +75,7 @@ resource "aws_cloudfront_cache_policy" "example" {
   }
 }
 
-resource "aws_cloudfront_origin_request_policy" "example" {
+resource "aws_cloudfront_origin_request_policy" "origin_request_policy"{
   name = "${var.service}-${var.environment}"
 
   headers_config {
