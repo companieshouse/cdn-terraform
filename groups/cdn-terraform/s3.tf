@@ -1,13 +1,5 @@
 resource "aws_s3_bucket" "s3_bucket" {
-  bucket = "${var.service}.${var.environment}.${var.aws_account}.ch.gov.uk"
-  acl    = "private"
-}
-
-resource "aws_s3_bucket_versioning" "bucket_versioning" {
-  bucket = aws_s3_bucket.s3_bucket.id
-  versioning_configuration {
-    status = "Enabled"
-  }
+  bucket = "${var.environment}.${var.service}.${var.aws_account}.ch.gov.uk"
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "bucket_encryption" {
@@ -45,9 +37,16 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
 
 data "aws_iam_policy_document" "s3_cloudfront_policy" {
   statement {
-    principals {
-      type        = "AWS"
-      identifiers = ["arn:aws:cloudfront::<aws_account_id>:distribution/<cloudfront_distribution-id>"]
+
+   principals {
+      type        = "Service"
+      identifiers = ["cloudfront.amazonaws.com"]
+    }
+    
+    condition {
+      test     = "StringEquals"
+      variable = "AWS:SourceArn"
+      values   = [aws_cloudfront_distribution.cdn.arn]
     }
 
     actions = [
@@ -55,7 +54,6 @@ data "aws_iam_policy_document" "s3_cloudfront_policy" {
     ]
 
     resources = [
-      aws_s3_bucket.s3_bucket.arn,
       "${aws_s3_bucket.s3_bucket.arn}/*",
     ]
   }
