@@ -38,11 +38,11 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
 data "aws_iam_policy_document" "s3_cloudfront_policy" {
   statement {
 
-   principals {
+    principals {
       type        = "Service"
       identifiers = ["cloudfront.amazonaws.com"]
     }
-    
+
     condition {
       test     = "StringEquals"
       variable = "AWS:SourceArn"

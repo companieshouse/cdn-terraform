@@ -3,13 +3,13 @@ variable "aws_account" {
   description = "The name of the AWS account"
 }
 
-variable "aws_region" {
+variable "region" {
   type        = string
   description = "The AWS region in which resources will be created"
 }
 
 variable "default_ttl" {
-  type        = number 
+  type        = number
   description = "The default TTL (Time to Live) value"
   default     = 300
 }
