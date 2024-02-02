@@ -15,6 +15,9 @@ resource "aws_cloudfront_distribution" "cdn" {
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = local.cloudfront_s3_origin_id
 
+  cache_policy_id          = aws_cloudfront_cache_policy.cache_policy.id
+  origin_request_policy_id = aws_cloudfront_origin_request_policy.origin_request_policy.id
+
     viewer_protocol_policy = "redirect-to-https"
     min_ttl                = var.min_ttl
     default_ttl            = var.default_ttl
@@ -32,9 +35,6 @@ resource "aws_cloudfront_distribution" "cdn" {
     cloudfront_default_certificate = true
   }
 }
-
-cache_policy_id          = aws_cloudfront_cache_policy.cache_policy.id
-origin_request_policy_id = aws_cloudfront_origin_request_policy.origin_request_policy.id
 
 resource "aws_cloudfront_origin_access_control" "cdn" {
   name                              = "${var.environment}-${var.service}"
