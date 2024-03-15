@@ -1,2 +1,2 @@
 aws_account = "development"
-environment = "cidev"
+environment = "development"
