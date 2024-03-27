@@ -14,11 +14,6 @@ variable "default_ttl" {
   default     = 300
 }
 
-variable "environment" {
-  type        = string
-  description = "The environment name to be used when creating AWS resources"
-}
-
 variable "min_ttl" {
   type        = number
   description = "The minimum TTL value"

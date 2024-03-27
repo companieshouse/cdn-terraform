@@ -37,7 +37,7 @@ resource "aws_cloudfront_distribution" "cdn" {
 }
 
 resource "aws_cloudfront_origin_access_control" "cdn" {
-  name                              = "${var.environment}-${var.service}"
+  name                              = "${var.service}-${var.aws_account}"
   description                       = "Origin access control for access to assets in S3 bucket"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
@@ -45,7 +45,7 @@ resource "aws_cloudfront_origin_access_control" "cdn" {
 }
 
 resource "aws_cloudfront_cache_policy" "cache_policy" {
-  name        = "${var.environment}-${var.service}"
+  name        = "${var.service}-${var.aws_account}"
   min_ttl     = var.min_ttl
   default_ttl = var.default_ttl
   max_ttl     = var.max_ttl
@@ -69,7 +69,7 @@ resource "aws_cloudfront_cache_policy" "cache_policy" {
 }
 
 resource "aws_cloudfront_origin_request_policy" "origin_request_policy" {
-  name = "${var.environment}-${var.service}"
+  name = "${var.service}-${var.aws_account}"
 
   headers_config {
     header_behavior = "none"
