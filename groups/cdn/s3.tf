@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "s3_bucket" {
-  bucket = "${var.environment}.${var.service}.${var.aws_account}.ch.gov.uk"
+  bucket = "${var.service}.${var.aws_account}.ch.gov.uk"
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "bucket_encryption" {
