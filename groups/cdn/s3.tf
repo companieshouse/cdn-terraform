@@ -35,63 +35,48 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
   policy = data.aws_iam_policy_document.s3_cloudfront_policy.json
 }
 
-resource "aws_s3_bucket" "cdn_log_bucket" {
-  bucket = "chs_cdn_server_access_logging"
+/// S3 server access logging  resources ///
+
+resource "aws_s3_bucket" "logs" {
+  bucket = "${var.service}-access-logs.${var.aws_account}.ch.gov.uk"
 }
-resource "aws_s3_bucket_logging" "s3_cdn_logging" {
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "logs" {
+  bucket = aws_s3_bucket.logs.id
+
+  rule {
+    bucket_key_enabled = true
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "logs" {
+  bucket = aws_s3_bucket.logs.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket_ownership_controls" "logs" {
+  bucket = aws_s3_bucket.logs.id
+
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
+}
+
+resource "aws_s3_bucket_logging" "s3_bucket" {
   bucket = aws_s3_bucket.s3_bucket.id
 
-  target_bucket = aws_s3_bucket.cdn_log_bucket.id
-  target_prefix = "log/"
+  target_bucket = aws_s3_bucket.logs.id
+  target_prefix = "logs/"
 }
 
-resource "aws_s3_bucket_acl" "log_bucket_acl" {
-  bucket = aws_s3_bucket.cdn_log_bucket.id
-  acl    = "log-delivery-write"
-}
-
-data "aws_iam_policy_document" "s3_ssl_policy" {
-  statement {
-    sid    = "AllowSSLRequestsOnly"
-    effect = "Deny"
-    principals {
-      type        = "*"
-      identifiers = ["*"]
-    }
-    condition {
-      test     = "Bool"
-      variable = "aws:SecureTransport"
-      values   = ["false"]
-    }
-    actions = [
-      "s3:*",
-    ]
-    resources = [
-      "${aws_s3_bucket.s3_bucket.arn}/*"
-    ]
-  }
-}
-
-data "aws_iam_policy_document" "s3_cloudfront_policy" {
-  statement {
-
-    principals {
-      type        = "Service"
-      identifiers = ["cloudfront.amazonaws.com"]
-    }
-
-    condition {
-      test     = "StringEquals"
-      variable = "AWS:SourceArn"
-      values   = [aws_cloudfront_distribution.cdn.arn]
-    }
-
-    actions = [
-      "s3:GetObject",
-    ]
-
-    resources = [
-      "${aws_s3_bucket.s3_bucket.arn}/*",
-    ]
-  }
+resource "aws_s3_bucket_policy" "logs" {
+  bucket = aws_s3_bucket.logs.id
+  policy = data.aws_iam_policy_document.logs.json
 }
