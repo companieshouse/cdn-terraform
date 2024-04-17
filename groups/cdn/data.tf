@@ -1,59 +1,72 @@
 data "aws_caller_identity" "current" {}
 
-data "aws_iam_policy_document" "logs" {
+data "aws_iam_policy_document" "s3_access_logs_bucket_policy" {
   statement {
-    sid = "AllowPutObjectS3ServerAccessLogs"
-
+    sid    = "AllowPutObjectForS3LoggingService"
     effect = "Allow"
+
+    resources = [
+      "arn:aws:s3:::${var.aws_account}-${var.region}-s3-access-logs/*"
+    ]
+
+    actions = ["s3:PutObject"]
 
     principals {
       type        = "Service"
       identifiers = ["logging.s3.amazonaws.com"]
     }
 
-    actions = [
-      "s3:PutObject"
-    ]
-
-    resources = [
-      "${aws_s3_bucket.logs.arn}/logs/*"
-    ]
-
-    condition {
-      test     = "ArnLike"
-      variable = "aws:SourceArn"
-      values   = [aws_s3_bucket.s3_bucket.arn]
-    }
-
     condition {
       test     = "StringEquals"
+      values   = [data.aws_caller_identity.current.account_id]
       variable = "aws:SourceAccount"
-      values   = [local.aws_account_id]
     }
   }
 
   statement {
-    sid = "RestrictToS3ServerAccessLogs"
-
+    sid    = "DenyPutOrDeleteObjectForAllPrincipalsOtherThanS3LoggingService"
     effect = "Deny"
+
+    resources = [
+      "arn:aws:s3:::${var.aws_account}-${var.region}-s3-access-logs/*"
+    ]
+
+    actions = [
+        "s3:PutObject",
+        "s3:DeleteObject"
+    ]
 
     principals {
       type        = "*"
       identifiers = ["*"]
     }
 
-    actions = [
-      "s3:PutObject"
-    ]
-
-    resources = [
-      "${aws_s3_bucket.logs.arn}/logs/*"
-    ]
-
     condition {
       test     = "ForAllValues:StringNotEquals"
-      variable = "aws:PrincipalServiceNamesList"
       values   = ["logging.s3.amazonaws.com"]
+      variable = "aws:PrincipalServiceNamesList"
+    }
+  }
+
+  statement {
+    sid    = "DenyAllWhereSecureTransportNotUsed"
+    effect = "Deny"
+
+    resources = [
+      "arn:aws:s3:::${var.aws_account}-${var.region}-s3-access-logs/*"
+    ]
+
+    actions = ["s3:*"]
+
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+
+    condition {
+      test     = "Bool"
+      values   = ["false"]
+      variable = "aws:SecureTransport"
     }
   }
 
@@ -83,6 +96,7 @@ data "aws_iam_policy_document" "logs" {
     }
   }
 }
+
 
 data "aws_iam_policy_document" "s3_bucket_policy" {
   statement {

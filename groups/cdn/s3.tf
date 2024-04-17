@@ -36,46 +36,39 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
 }
 
 
-resource "aws_s3_bucket" "logs" {
-  bucket = "${var.service}-access-logs.${var.aws_account}.ch.gov.uk"
-}
+module "s3_access_logs_bucket" {
+  source  = "terraform-aws-modules/s3-bucket/aws"
+  version = "2.1.0"
 
-resource "aws_s3_bucket_server_side_encryption_configuration" "logs" {
-  bucket = aws_s3_bucket.logs.id
-
-  rule {
-    bucket_key_enabled = true
-    apply_server_side_encryption_by_default {
-      sse_algorithm = "AES256"
-    }
-  }
-}
-
-resource "aws_s3_bucket_public_access_block" "logs" {
-  bucket = aws_s3_bucket.logs.id
+  bucket        = "${var.aws_account}-${var.region}-s3-access-logs"
+  attach_policy = "true"
+  policy        = data.aws_iam_policy_document.s3_access_logs_bucket_policy.json
 
   block_public_acls       = true
   block_public_policy     = true
   ignore_public_acls      = true
   restrict_public_buckets = true
-}
 
-resource "aws_s3_bucket_ownership_controls" "logs" {
-  bucket = aws_s3_bucket.logs.id
-
-  rule {
-    object_ownership = "BucketOwnerEnforced"
+  versioning = {
+    enabled    = false
+    mfa_delete = false
   }
-}
 
-resource "aws_s3_bucket_logging" "s3_bucket" {
-  bucket = aws_s3_bucket.s3_bucket.id
+  server_side_encryption_configuration = {
+    rule = {
+      apply_server_side_encryption_by_default = {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
 
-  target_bucket = aws_s3_bucket.logs.id
-  target_prefix = "logs/"
-}
-
-resource "aws_s3_bucket_policy" "logs" {
-  bucket = aws_s3_bucket.logs.id
-  policy = data.aws_iam_policy_document.logs.json
+  lifecycle_rule = [
+    {
+      id      = "LogRetention"
+      enabled = true
+      expiration = {
+        days = 90
+      }
+    }
+  ]
 }
