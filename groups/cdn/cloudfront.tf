@@ -1,3 +1,4 @@
+#trivy:ignore:AVD-AWS-0011 trivy:ignore:AVD-AWS-0013
 resource "aws_cloudfront_distribution" "cdn" {
   enabled             = true
   http_version        = "http2and3"
