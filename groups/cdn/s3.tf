@@ -2,7 +2,7 @@ resource "aws_s3_bucket" "s3_bucket" {
   bucket = "${var.service}.${var.aws_account}.ch.gov.uk"
 }
 
-#trivy:ignore:avd-aws-0132
+#trivy:ignore:AVD-AWS-0132
 resource "aws_s3_bucket_server_side_encryption_configuration" "bucket_encryption" {
   bucket = aws_s3_bucket.s3_bucket.id
 
@@ -41,7 +41,7 @@ resource "aws_s3_bucket" "logs" {
   bucket = "${var.service}-access-logs.${var.aws_account}.ch.gov.uk"
 }
 
-#trivy:ignore:avd-aws-0132
+#trivy:ignore:AVD-AWS-0132
 resource "aws_s3_bucket_server_side_encryption_configuration" "logs" {
   bucket = aws_s3_bucket.logs.id
 
