@@ -35,7 +35,6 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
   policy = data.aws_iam_policy_document.s3_cloudfront_policy.json
 }
 
-
 resource "aws_s3_bucket" "logs" {
   bucket = "${var.service}-access-logs.${var.aws_account}.ch.gov.uk"
 }
