@@ -84,7 +84,29 @@ data "aws_iam_policy_document" "logs" {
   }
 }
 
-data "aws_iam_policy_document" "s3_bucket_policy" {
+data "aws_iam_policy_document" "assets" {
+  statement {
+
+    principals {
+      type        = "Service"
+      identifiers = ["cloudfront.amazonaws.com"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "AWS:SourceArn"
+      values   = [aws_cloudfront_distribution.cdn.arn]
+    }
+
+    actions = [
+      "s3:GetObject",
+    ]
+
+    resources = [
+      "${aws_s3_bucket.s3_bucket.arn}/*",
+    ]
+  }
+
   statement {
     sid = "DenyNonSSLRequests"
 
@@ -109,30 +131,6 @@ data "aws_iam_policy_document" "s3_bucket_policy" {
       variable = "aws:SecureTransport"
       values   = ["false"]
     }
-  }
-}
-
-data "aws_iam_policy_document" "s3_cloudfront_policy" {
-  statement {
-
-    principals {
-      type        = "Service"
-      identifiers = ["cloudfront.amazonaws.com"]
-    }
-
-    condition {
-      test     = "StringEquals"
-      variable = "AWS:SourceArn"
-      values   = [aws_cloudfront_distribution.cdn.arn]
-    }
-
-    actions = [
-      "s3:GetObject",
-    ]
-
-    resources = [
-      "${aws_s3_bucket.s3_bucket.arn}/*",
-    ]
   }
 }
 
