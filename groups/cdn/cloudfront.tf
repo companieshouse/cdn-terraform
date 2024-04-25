@@ -8,7 +8,7 @@ resource "aws_cloudfront_distribution" "assets" {
   origin {
     domain_name              = aws_s3_bucket.assets.bucket_regional_domain_name
     origin_id                = local.cloudfront_s3_origin_id
-    origin_access_control_id = aws_cloudfront_origin_access_control.cdn.id
+    origin_access_control_id = aws_cloudfront_origin_access_control.assets.id
   }
 
   default_cache_behavior {
@@ -16,8 +16,8 @@ resource "aws_cloudfront_distribution" "assets" {
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = local.cloudfront_s3_origin_id
 
-    cache_policy_id          = aws_cloudfront_cache_policy.cache_policy.id
-    origin_request_policy_id = aws_cloudfront_origin_request_policy.origin_request_policy.id
+    cache_policy_id          = aws_cloudfront_cache_policy.assets.id
+    origin_request_policy_id = aws_cloudfront_origin_request_policy.assets.id
 
     viewer_protocol_policy = "redirect-to-https"
     min_ttl                = var.min_ttl
