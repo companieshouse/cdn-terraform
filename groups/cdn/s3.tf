@@ -1,10 +1,10 @@
-resource "aws_s3_bucket" "s3_bucket" {
+resource "aws_s3_bucket" "assets" {
   bucket = "${var.service}.${var.aws_account}.ch.gov.uk"
 }
 
 #trivy:ignore:AVD-AWS-0132
 resource "aws_s3_bucket_server_side_encryption_configuration" "bucket_encryption" {
-  bucket = aws_s3_bucket.s3_bucket.id
+  bucket = aws_s3_bucket.assets.id
 
   rule {
     bucket_key_enabled = true
@@ -14,16 +14,16 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "bucket_encryption
   }
 }
 
-resource "aws_s3_bucket_ownership_controls" "bucket_ownership" {
-  bucket = aws_s3_bucket.s3_bucket.id
+resource "aws_s3_bucket_ownership_controls" "assets" {
+  bucket = aws_s3_bucket.assets.id
 
   rule {
     object_ownership = "BucketOwnerEnforced"
   }
 }
 
-resource "aws_s3_bucket_public_access_block" "bucket_public_access" {
-  bucket = aws_s3_bucket.s3_bucket.id
+resource "aws_s3_bucket_public_access_block" "assets" {
+  bucket = aws_s3_bucket.assets.id
 
   block_public_acls       = true
   block_public_policy     = true
@@ -31,9 +31,9 @@ resource "aws_s3_bucket_public_access_block" "bucket_public_access" {
   restrict_public_buckets = true
 }
 
-resource "aws_s3_bucket_policy" "bucket_policy" {
-  bucket = aws_s3_bucket.s3_bucket.id
-  policy = data.aws_iam_policy_document.s3_cloudfront_policy.json
+resource "aws_s3_bucket_policy" "assets" {
+  bucket = aws_s3_bucket.assets.id
+  policy = data.aws_iam_policy_document.assets.json
 }
 
 resource "aws_s3_bucket" "logs" {
@@ -69,8 +69,8 @@ resource "aws_s3_bucket_ownership_controls" "logs" {
   }
 }
 
-resource "aws_s3_bucket_logging" "s3_bucket" {
-  bucket = aws_s3_bucket.s3_bucket.id
+resource "aws_s3_bucket_logging" "assets" {
+  bucket = aws_s3_bucket.assets.id
 
   target_bucket = aws_s3_bucket.logs.id
   target_prefix = "logs/"

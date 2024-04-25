@@ -22,7 +22,7 @@ data "aws_iam_policy_document" "logs" {
     condition {
       test     = "ArnLike"
       variable = "aws:SourceArn"
-      values   = [aws_s3_bucket.s3_bucket.arn]
+      values   = [aws_s3_bucket.assets.arn]
     }
 
     condition {
@@ -84,35 +84,7 @@ data "aws_iam_policy_document" "logs" {
   }
 }
 
-data "aws_iam_policy_document" "s3_bucket_policy" {
-  statement {
-    sid = "DenyNonSSLRequests"
-
-    effect = "Deny"
-
-    principals {
-      type        = "*"
-      identifiers = ["*"]
-    }
-
-    actions = [
-      "s3:*"
-    ]
-
-    resources = [
-      aws_s3_bucket.s3_bucket.arn,
-      "${aws_s3_bucket.s3_bucket.arn}/*"
-    ]
-
-    condition {
-      test     = "Bool"
-      variable = "aws:SecureTransport"
-      values   = ["false"]
-    }
-  }
-}
-
-data "aws_iam_policy_document" "s3_cloudfront_policy" {
+data "aws_iam_policy_document" "assets" {
   statement {
 
     principals {
@@ -131,8 +103,33 @@ data "aws_iam_policy_document" "s3_cloudfront_policy" {
     ]
 
     resources = [
-      "${aws_s3_bucket.s3_bucket.arn}/*",
+      "${aws_s3_bucket.assets.arn}/*",
     ]
   }
-}
 
+  statement {
+    sid = "DenyNonSSLRequests"
+
+    effect = "Deny"
+
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+
+    actions = [
+      "s3:*"
+    ]
+
+    resources = [
+      aws_s3_bucket.assets.arn,
+      "${aws_s3_bucket.assets.arn}/*"
+    ]
+
+    condition {
+      test     = "Bool"
+      variable = "aws:SecureTransport"
+      values   = ["false"]
+    }
+  }
+}
