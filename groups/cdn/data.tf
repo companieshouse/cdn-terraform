@@ -15,11 +15,11 @@ data "aws_iam_policy_document" "assets" {
     }
 
     actions = [
-      "s3:GetObject",
+      "s3:GetObject"
     ]
 
     resources = [
-      "${aws_s3_bucket.assets.arn}/*",
+      "${aws_s3_bucket.assets.arn}/*"
     ]
   }
 

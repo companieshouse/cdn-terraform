@@ -1,5 +1,5 @@
 #trivy:ignore:AVD-AWS-0011 trivy:ignore:AVD-AWS-0013
-resource "aws_cloudfront_distribution" "cdn" {
+resource "aws_cloudfront_distribution" "assets" {
   enabled             = true
   http_version        = "http2and3"
   is_ipv6_enabled     = true
@@ -37,7 +37,7 @@ resource "aws_cloudfront_distribution" "cdn" {
   }
 }
 
-resource "aws_cloudfront_origin_access_control" "cdn" {
+resource "aws_cloudfront_origin_access_control" "assets" {
   name                              = "${var.service}-${var.aws_account}"
   description                       = "Origin access control for access to assets in S3 bucket"
   origin_access_control_origin_type = "s3"
@@ -45,7 +45,7 @@ resource "aws_cloudfront_origin_access_control" "cdn" {
   signing_protocol                  = "sigv4"
 }
 
-resource "aws_cloudfront_cache_policy" "cache_policy" {
+resource "aws_cloudfront_cache_policy" "assets" {
   name        = "${var.service}-${var.aws_account}"
   min_ttl     = var.min_ttl
   default_ttl = var.default_ttl
@@ -69,7 +69,7 @@ resource "aws_cloudfront_cache_policy" "cache_policy" {
   }
 }
 
-resource "aws_cloudfront_origin_request_policy" "origin_request_policy" {
+resource "aws_cloudfront_origin_request_policy" "assets" {
   name = "${var.service}-${var.aws_account}"
 
   headers_config {
