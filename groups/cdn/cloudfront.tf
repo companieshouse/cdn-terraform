@@ -1,14 +1,14 @@
 #trivy:ignore:AVD-AWS-0011 trivy:ignore:AVD-AWS-0013
-resource "aws_cloudfront_distribution" "cdn" {
+resource "aws_cloudfront_distribution" "assets" {
   enabled             = true
   http_version        = "http2and3"
   is_ipv6_enabled     = true
   default_root_object = "index.html"
 
   origin {
-    domain_name              = aws_s3_bucket.s3_bucket.bucket_regional_domain_name
+    domain_name              = aws_s3_bucket.assets.bucket_regional_domain_name
     origin_id                = local.cloudfront_s3_origin_id
-    origin_access_control_id = aws_cloudfront_origin_access_control.cdn.id
+    origin_access_control_id = aws_cloudfront_origin_access_control.assets.id
   }
 
   default_cache_behavior {
@@ -16,8 +16,8 @@ resource "aws_cloudfront_distribution" "cdn" {
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = local.cloudfront_s3_origin_id
 
-    cache_policy_id          = aws_cloudfront_cache_policy.cache_policy.id
-    origin_request_policy_id = aws_cloudfront_origin_request_policy.origin_request_policy.id
+    cache_policy_id          = aws_cloudfront_cache_policy.assets.id
+    origin_request_policy_id = aws_cloudfront_origin_request_policy.assets.id
 
     viewer_protocol_policy = "redirect-to-https"
     min_ttl                = var.min_ttl
@@ -37,7 +37,7 @@ resource "aws_cloudfront_distribution" "cdn" {
   }
 }
 
-resource "aws_cloudfront_origin_access_control" "cdn" {
+resource "aws_cloudfront_origin_access_control" "assets" {
   name                              = "${var.service}-${var.aws_account}"
   description                       = "Origin access control for access to assets in S3 bucket"
   origin_access_control_origin_type = "s3"
@@ -45,7 +45,7 @@ resource "aws_cloudfront_origin_access_control" "cdn" {
   signing_protocol                  = "sigv4"
 }
 
-resource "aws_cloudfront_cache_policy" "cache_policy" {
+resource "aws_cloudfront_cache_policy" "assets" {
   name        = "${var.service}-${var.aws_account}"
   min_ttl     = var.min_ttl
   default_ttl = var.default_ttl
@@ -69,7 +69,7 @@ resource "aws_cloudfront_cache_policy" "cache_policy" {
   }
 }
 
-resource "aws_cloudfront_origin_request_policy" "origin_request_policy" {
+resource "aws_cloudfront_origin_request_policy" "assets" {
   name = "${var.service}-${var.aws_account}"
 
   headers_config {
