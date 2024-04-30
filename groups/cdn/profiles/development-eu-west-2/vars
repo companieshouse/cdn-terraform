@@ -1,1 +1,5 @@
 aws_account = "development"
+
+environments = [
+    "devops1"
+]

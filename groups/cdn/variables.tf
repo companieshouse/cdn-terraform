@@ -3,6 +3,11 @@ variable "aws_account" {
   description = "The name of the AWS account"
 }
 
+variable "environments" {
+  type        = set(string)
+  description = "A set of strings representing environment names for which CloudFront distributions will be created"
+}
+
 variable "region" {
   type        = string
   description = "The AWS region in which resources will be created"
