@@ -1,5 +1,7 @@
 aws_account = "development"
 
 environments = [
-    "devops1"
+    "cidev",
+    "devops1",
+    "phoenix1",
 ]
