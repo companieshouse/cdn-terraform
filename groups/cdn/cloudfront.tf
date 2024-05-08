@@ -11,18 +11,18 @@ resource "aws_cloudfront_distribution" "assets" {
 
   origin {
     domain_name              = aws_s3_bucket.assets.bucket_regional_domain_name
-    origin_id                = "${var.service}-${each.value}-${var.aws_account}"
-    origin_access_control_id = aws_cloudfront_origin_access_control.assets[each.value].id
+    origin_id                = local.cloudfront_shared_origin_id
+    origin_access_control_id = aws_cloudfront_origin_access_control.assets.id
     origin_path              = "/${each.value}"
   }
 
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = "${var.service}-${each.value}-${var.aws_account}"
+    target_origin_id = local.cloudfront_shared_origin_id
 
-    cache_policy_id          = aws_cloudfront_cache_policy.assets[each.value].id
-    origin_request_policy_id = aws_cloudfront_origin_request_policy.assets[each.value].id
+    cache_policy_id          = aws_cloudfront_cache_policy.assets.id
+    origin_request_policy_id = aws_cloudfront_origin_request_policy.assets.id
 
     viewer_protocol_policy = "redirect-to-https"
     min_ttl                = var.min_ttl
@@ -47,9 +47,7 @@ resource "aws_cloudfront_distribution" "assets" {
 }
 
 resource "aws_cloudfront_origin_access_control" "assets" {
-  for_each = var.environments
-
-  name                              = "${var.service}-${each.value}-${var.aws_account}"
+  name                              = "${var.service}-${var.aws_account}-shared-control"
   description                       = "Origin access control for access to assets in S3 bucket"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
@@ -57,9 +55,7 @@ resource "aws_cloudfront_origin_access_control" "assets" {
 }
 
 resource "aws_cloudfront_cache_policy" "assets" {
-  for_each = var.environments
-
-  name        = "${var.service}-${each.value}-${var.aws_account}"
+  name        = "${var.service}-${var.aws_account}-shared-policy"
   min_ttl     = var.min_ttl
   default_ttl = var.default_ttl
   max_ttl     = var.max_ttl
@@ -83,9 +79,7 @@ resource "aws_cloudfront_cache_policy" "assets" {
 }
 
 resource "aws_cloudfront_origin_request_policy" "assets" {
-  for_each = var.environments
-
-  name = "${var.service}-${each.value}-${var.aws_account}"
+  name = "shared-${var.service}-${var.aws_account}-shared-policy"
 
   headers_config {
     header_behavior = "none"
