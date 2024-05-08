@@ -79,7 +79,7 @@ resource "aws_cloudfront_cache_policy" "assets" {
 }
 
 resource "aws_cloudfront_origin_request_policy" "assets" {
-  name = "shared-${var.service}-${var.aws_account}-shared-policy"
+  name = "${var.service}-${var.aws_account}-shared-policy"
 
   headers_config {
     header_behavior = "none"
