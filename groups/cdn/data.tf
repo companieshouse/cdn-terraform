@@ -11,7 +11,7 @@ data "aws_iam_policy_document" "assets" {
     condition {
       test     = "StringEquals"
       variable = "AWS:SourceArn"
-      values   = [aws_cloudfront_distribution.assets.arn]
+      values   = [for distribution in aws_cloudfront_distribution.assets : distribution.arn]
     }
 
     actions = [

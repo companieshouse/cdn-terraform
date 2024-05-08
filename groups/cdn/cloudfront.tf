@@ -1,5 +1,9 @@
 #trivy:ignore:AVD-AWS-0011 trivy:ignore:AVD-AWS-0013
 resource "aws_cloudfront_distribution" "assets" {
+  for_each = var.environments
+
+  comment = "${each.value} ${var.service}"
+
   enabled             = true
   http_version        = "http2and3"
   is_ipv6_enabled     = true
@@ -7,17 +11,18 @@ resource "aws_cloudfront_distribution" "assets" {
 
   origin {
     domain_name              = aws_s3_bucket.assets.bucket_regional_domain_name
-    origin_id                = local.cloudfront_s3_origin_id
-    origin_access_control_id = aws_cloudfront_origin_access_control.assets.id
+    origin_id                = "${var.service}-${each.value}-${var.aws_account}"
+    origin_access_control_id = aws_cloudfront_origin_access_control.assets[each.value].id
+    origin_path              = "/${each.value}"
   }
 
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = local.cloudfront_s3_origin_id
+    target_origin_id = "${var.service}-${each.value}-${var.aws_account}"
 
-    cache_policy_id          = aws_cloudfront_cache_policy.assets.id
-    origin_request_policy_id = aws_cloudfront_origin_request_policy.assets.id
+    cache_policy_id          = aws_cloudfront_cache_policy.assets[each.value].id
+    origin_request_policy_id = aws_cloudfront_origin_request_policy.assets[each.value].id
 
     viewer_protocol_policy = "redirect-to-https"
     min_ttl                = var.min_ttl
@@ -35,10 +40,16 @@ resource "aws_cloudfront_distribution" "assets" {
   viewer_certificate {
     cloudfront_default_certificate = true
   }
+
+  tags = {
+    Environment = "${each.value}"
+  }
 }
 
 resource "aws_cloudfront_origin_access_control" "assets" {
-  name                              = "${var.service}-${var.aws_account}"
+  for_each = var.environments
+
+  name                              = "${var.service}-${each.value}-${var.aws_account}"
   description                       = "Origin access control for access to assets in S3 bucket"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
@@ -46,7 +57,9 @@ resource "aws_cloudfront_origin_access_control" "assets" {
 }
 
 resource "aws_cloudfront_cache_policy" "assets" {
-  name        = "${var.service}-${var.aws_account}"
+  for_each = var.environments
+
+  name        = "${var.service}-${each.value}-${var.aws_account}"
   min_ttl     = var.min_ttl
   default_ttl = var.default_ttl
   max_ttl     = var.max_ttl
@@ -70,7 +83,9 @@ resource "aws_cloudfront_cache_policy" "assets" {
 }
 
 resource "aws_cloudfront_origin_request_policy" "assets" {
-  name = "${var.service}-${var.aws_account}"
+  for_each = var.environments
+
+  name = "${var.service}-${each.value}-${var.aws_account}"
 
   headers_config {
     header_behavior = "none"

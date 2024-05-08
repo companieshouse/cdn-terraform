@@ -1,1 +1,5 @@
 aws_account = "staging"
+
+environments = [
+    "staging"
+]

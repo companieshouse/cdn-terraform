@@ -1,1 +1,5 @@
 aws_account = "live"
+
+environments = [
+    "live"
+]
