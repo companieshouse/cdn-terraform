@@ -5,6 +5,7 @@ environments = [
   "amido",
   "apollo1",
   "celes1",
+  "cidev",
   "csi",
   "devops1",
   "devops2",
