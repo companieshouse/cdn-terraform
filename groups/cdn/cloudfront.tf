@@ -53,6 +53,31 @@ resource "aws_cloudfront_origin_access_control" "assets" {
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
 }
+resource "aws_s3_bucket" "log_bucket" {
+  bucket = "cloudfront-logs-bucket"
+
+  block_public_acls   = true
+  block_public_policy = true
+
+  lifecycle_rule {
+    id      = "log-retention"
+    enabled = true
+
+    expiration {
+      days = 30
+    }
+  }
+
+  tags = {
+    Name = "Cloudfront Logs Bucket"
+  }
+}
+
+logging_config {
+  bucket          = aws_s3_bucket.log_bucket.bucket_domain_name 
+  include_cookies = false
+  prefix          = "cloudfront_logs/"
+}
 
 resource "aws_cloudfront_cache_policy" "assets" {
   name        = "${var.service}-${var.aws_account}-shared-policy"
