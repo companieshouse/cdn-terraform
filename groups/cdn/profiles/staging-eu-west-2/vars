@@ -1,5 +1,11 @@
 aws_account = "staging"
 
 environments = [
-    "staging"
+  "staging"
+]
+
+cors_allowed_origins = [
+  "https://*staging*company-information-service.gov.uk",
+  "https://*staging*.companieshouse.gov.uk",
+  "https://*stg*.companieshouse.gov.uk"
 ]

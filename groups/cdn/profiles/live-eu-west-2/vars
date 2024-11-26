@@ -1,5 +1,10 @@
 aws_account = "live"
 
 environments = [
-    "live"
+  "live"
+]
+
+cors_allowed_origins = [
+  "https://*.company-information-service.gov.uk",
+  "https://*.companieshouse.gov.uk"
 ]

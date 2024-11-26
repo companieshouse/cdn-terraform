@@ -36,3 +36,8 @@ variable "service" {
   description = "The service name to be used when creating AWS resources"
   default     = "chs-cdn"
 }
+
+variable "cors_allowed_origins" {
+  type        = set(string)
+  description = "The origins which are allowed to access assets cross-origin"
+}
