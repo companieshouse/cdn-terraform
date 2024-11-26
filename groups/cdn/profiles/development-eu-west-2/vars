@@ -22,3 +22,7 @@ environments = [
   "titans1",
   "toro1"
 ]
+
+cors_allowed_origins = [
+  "https://*.aws.chdev.org"
+]
