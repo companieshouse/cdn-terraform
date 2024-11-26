@@ -5,6 +5,13 @@ environments = [
 ]
 
 cors_allowed_origins = [
-  "https://*.company-information-service.gov.uk",
-  "https://*.companieshouse.gov.uk"
+  "https://beta.companieshouse.gov.uk",
+  "https://find-and-update.company-information.service.gov.uk",
+  "https://identity.company-information.service.gov.uk",
+  "https://follow.company-information.service.gov.uk",
+  "https://pay.company-information.service.gov.uk",
+  "https://extractives.company-information.service.gov.uk",
+  "https://developer.company-information.service.gov.uk",
+  "https://developer-specs.company-information.service.gov.uk",
+  "https://ewf.companieshouse.gov.uk"
 ]
