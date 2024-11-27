@@ -10,8 +10,8 @@ data "aws_iam_policy_document" "assets" {
 
     condition {
       test     = "StringEquals"
-      variable = "AWS:SourceArn"
-      values   = [for distribution in aws_cloudfront_distribution.assets : distribution.arn]
+      variable = "aws:ResourceTag/Service"
+      values   = [var.service]
     }
 
     actions = [
