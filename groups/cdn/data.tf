@@ -10,7 +10,7 @@ data "aws_iam_policy_document" "assets" {
 
     condition {
       test     = "StringEquals"
-      variable = "aws:ResourceTag/Service"
+      variable = "aws:PrincipalTag/Service"
       values   = [var.service]
     }
 
