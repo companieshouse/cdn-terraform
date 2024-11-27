@@ -25,10 +25,6 @@ resource "aws_cloudfront_distribution" "assets" {
     origin_request_policy_id = aws_cloudfront_origin_request_policy.assets.id
 
     viewer_protocol_policy = "redirect-to-https"
-    min_ttl                = var.min_ttl
-    default_ttl            = var.default_ttl
-    max_ttl                = var.max_ttl
-    compress               = true
   }
 
   restrictions {
