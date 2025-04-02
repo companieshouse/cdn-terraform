@@ -58,7 +58,10 @@ resource "aws_cloudfront_cache_policy" "assets" {
 
   parameters_in_cache_key_and_forwarded_to_origin {
     headers_config {
-      header_behavior = "none"
+      header_behavior = "whitelist"
+      headers {
+        items = ["Origin"]
+      }
     }
 
     cookies_config {
