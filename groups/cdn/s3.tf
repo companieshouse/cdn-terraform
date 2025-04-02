@@ -36,18 +36,6 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "assets" {
   }
 }
 
-resource "aws_s3_bucket_cors_configuration" "assets" {
-  bucket = aws_s3_bucket.assets.id
-
-  cors_rule {
-    allowed_headers = ["*"]
-    allowed_methods = ["GET", "HEAD"]
-    allowed_origins = var.cors_allowed_origins
-    expose_headers  = ["Access-Control-Allow-Origin"]
-    max_age_seconds = 3000
-  }
-}
-
 module "s3_access_logging" {
   source = "git@github.com:companieshouse/terraform-modules//aws/s3_access_logging?ref=1.0.307"
 

@@ -89,3 +89,25 @@ resource "aws_cloudfront_origin_request_policy" "assets" {
     query_string_behavior = "none"
   }
 }
+
+resource "aws_cloudfront_response_headers_policy" "assets" {
+  name    = "${var.service}-${var.aws_account}-shared-policy"
+
+  cors_config {
+    origin_override = false
+    access_control_allow_credentials = false
+    access_control_max_age_sec = 3000
+
+    access_control_allow_headers {
+      items = "*"
+    }
+
+    access_control_allow_methods {
+      items = ["GET", "HEAD"]
+    }
+
+    access_control_allow_origins {
+      items = var.cors_allowed_origins
+    }
+  }
+}
