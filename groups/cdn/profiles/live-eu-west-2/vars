@@ -5,6 +5,7 @@ environments = [
 ]
 
 cors_allowed_origins = [
+  "https://admin-web.company-information.service.gov.uk",
   "https://beta.companieshouse.gov.uk",
   "https://find-and-update.company-information.service.gov.uk",
   "https://identity.company-information.service.gov.uk",
