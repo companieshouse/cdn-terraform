@@ -5,6 +5,7 @@ environments = [
 ]
 
 cors_allowed_origins = [
+  "https://admin-web-staging.company-information.service.gov.uk",
   "https://staging-aws.companieshouse.gov.uk",
   "https://staging.company-information.service.gov.uk",
   "https://identity-staging.company-information.service.gov.uk",
